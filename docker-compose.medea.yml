@@ -1,0 +1,14 @@
+version: "2"
+
+services:
+  medea:
+    container_name: ${COMPOSE_PROJECT_NAME}-backend
+    image: ${COMPOSE_MEDEA_IMAGE_NAME}:${COMPOSE_MEDEA_IMAGE_VER}
+    environment:
+      RUST_LOG: ${RUST_LOG}
+      MEDEA__CONF: ${MEDEA__CONF}
+      MEDEA__CONTROL__STATIC_SPECS_DIR: ${MEDEA__CONTROL__STATIC_SPECS_DIR}
+    volumes:
+      - ./${MEDEA__CONF}:/${MEDEA__CONF}:ro
+      - ./${MEDEA__CONTROL__STATIC_SPECS_DIR}:/${MEDEA__CONTROL__STATIC_SPECS_DIR}:ro
+    network_mode: host

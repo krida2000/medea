@@ -1,0 +1,55 @@
+// Callback service gRPC schema.
+
+syntax = "proto3";
+
+package callback;
+
+// Service for receiving callbacks from a media server.
+service Callback {
+  // Fires when a certain callback event happens on a media server.
+  rpc OnEvent (Request) returns (Response);
+}
+
+// Request with a fired callback event and its meta information.
+message Request {
+  // FID (Full ID) of the media `Element`, the occurred event is related to.
+  string fid = 1;
+  // Datetime when the event occurred.
+  string at = 2;
+
+  // Occurred event.
+  oneof event {
+    OnJoin on_join = 3;
+    OnLeave on_leave = 4;
+  }
+}
+
+// Empty response of the `Callback` service.
+//
+// We don't use `google.protobuf.Empty` to be able to add some fields (if
+// necessary) in the future.
+message Response {}
+
+// Event notifying about a `Member` joining a `Room`.
+message OnJoin {}
+
+// Event notifying about a `Member` leaving its `Room`.
+message OnLeave {
+  // Reason of why the `Member` leaves.
+  Reason reason = 1;
+
+  // Possible reasons of why a `Member` leaves its `Room`.
+  enum Reason {
+    // `Member` was disconnected normally.
+    DISCONNECTED = 0;
+
+    // Connection with the `Member` was lost.
+    LOST = 1;
+
+    // `Member` was forcibly disconnected by a media server.
+    KICKED = 2;
+
+    // Media server was shut down.
+    SHUTDOWN = 3;
+  }
+}
