@@ -73,7 +73,7 @@ void main() {
         () => returnsLocalMediaInitException('Dart err cause1').unwrap(),
         throwsA(predicate((e) =>
             e is LocalMediaInitException &&
-            e.kind() == LocalMediaInitExceptionKind.GetUserMediaAudioFailed &&
+            e.kind() == LocalMediaInitExceptionKind.GetUserMediaFailed &&
             e.cause() == 'Dart err cause1' &&
             e.trace().contains('at src'))));
 
@@ -306,7 +306,7 @@ void main() {
     await room.enableAudio();
     await room.disableRemoteAudio();
     await room.enableRemoteAudio();
-    await room.disableRemoteVideo(MediaSourceKind.Device);
+    await room.disableRemoteVideo();
 
     var stateErr;
     try {

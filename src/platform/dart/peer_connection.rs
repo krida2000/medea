@@ -94,10 +94,7 @@ mod peer_connection {
         );
 
         /// Returns a [`Dart_Handle`] to a newly created [`PeerConnection`].
-        pub fn new_peer(
-            ice_servers: Dart_Handle,
-            is_force_relayed: bool,
-        ) -> Dart_Handle;
+        pub fn new_peer(ice_servers: Dart_Handle) -> Dart_Handle;
 
         /// Creates a new [`Transceiver`[ in the provided [`PeerConnection`].
         pub fn add_transceiver(
@@ -158,7 +155,6 @@ impl RtcPeerConnection {
             handle: unsafe {
                 FutureFromDart::execute(peer_connection::new_peer(
                     ice_servers.get_handle(),
-                    is_force_relayed,
                 ))
                 .await
             }

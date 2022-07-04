@@ -71,7 +71,7 @@ pub use self::{
     room_handle::RoomHandle,
     utils::{
         c_str_into_string, free_dart_native_string, string_into_c_str,
-        ArgumentError, DartError as Error,
+        DartError as Error,
     },
 };
 

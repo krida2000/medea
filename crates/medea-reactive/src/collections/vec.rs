@@ -1,6 +1,6 @@
 //! Reactive vector based on [`Vec`].
 
-use std::{marker::PhantomData, mem, slice::Iter};
+use std::{marker::PhantomData, slice::Iter};
 
 use futures::stream::LocalBoxStream;
 
@@ -238,9 +238,11 @@ impl<T, S: SubscribersStore<T, O>, O> Drop for Vec<T, S, O> {
     /// Sends all items of a dropped [`Vec`] to the [`Vec::on_remove()`]
     /// subscriptions.
     fn drop(&mut self) {
-        for value in mem::take(&mut self.store) {
-            self.on_remove_subs.send_update(value);
-        }
+        let store = &mut self.store;
+        let on_remove_subs = &self.on_remove_subs;
+        store.drain(..).for_each(|value| {
+            on_remove_subs.send_update(value);
+        });
     }
 }
 

@@ -617,7 +617,9 @@ window.onload = async function() {
 
       connection.on_remote_track_added((track) => {
         let playElement = undefined;
-
+        track.on_media_direction_changed((direction) => {
+          console.log('New TransceiverDirection: ' + direction);
+        });
         if (track.kind() === rust.MediaKind.Video) {
           if (track.media_source_kind() === rust.MediaSourceKind.Display) {
             playElement = memberVideoDiv.getElementsByClassName('display-video')[0];
@@ -665,8 +667,11 @@ window.onload = async function() {
           playElement.srcObject = mediaStream;
         }
 
-        track.on_media_direction_changed((direction) => {
-          console.log('New TransceiverDirection: ' + direction);
+        track.on_enabled( () => {
+          console.log(`Track enabled: ${track.kind()}`);
+        });
+        track.on_disabled( () => {
+          console.log(`Track disabled: ${track.kind()}`);
         });
         track.on_muted( () => {
           console.log(`Track muted: ${track.kind()}`);

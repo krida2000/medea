@@ -792,7 +792,6 @@ impl PeerConnection {
                 .parse_tracks(
                     media_tracks.iter().map(|(t, _)| t).cloned().collect(),
                 )
-                .await
                 .map_err(tracerr::map_from_and_wrap!())?;
 
             let media_exchange_states_updates = self
@@ -1040,7 +1039,7 @@ impl PeerConnection {
         self.media_connections
             .get_senders()
             .into_iter()
-            .filter_map(|sndr| sndr.get_send_track())
+            .filter_map(|sndr| sndr.transceiver().send_track())
             .collect()
     }
 

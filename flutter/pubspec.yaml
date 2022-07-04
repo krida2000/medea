@@ -11,14 +11,13 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  ffi: ^2.0.0
+  ffi: ^1.0.0
   flutter_webrtc:
     git:
       url: https://github.com/krida2000/webrtc
   js: ^0.6.3
 
 dev_dependencies:
-  import_sorter: ^4.6.0
   pedantic: ^1.9.0
 
 flutter:

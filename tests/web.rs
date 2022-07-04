@@ -369,11 +369,9 @@ pub fn window() -> web_sys::Window {
 }
 
 // TODO: Might be extended to proc macro at some point.
-#[wasm_bindgen(inline_js = "\
-    export function is_firefox() { \
-        return navigator.userAgent.toLowerCase().indexOf('firefox') > -1; \
-    }\
-")]
+#[wasm_bindgen(inline_js = "export function is_firefox() { return \
+                            navigator.userAgent.toLowerCase().indexOf('\
+                            firefox') > -1; }")]
 extern "C" {
     fn is_firefox() -> bool;
 }

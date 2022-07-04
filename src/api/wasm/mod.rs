@@ -3,6 +3,9 @@
 //!
 //! [`Jason`]: crate::api::Jason
 
+// TODO: See https://github.com/rustwasm/wasm-bindgen/pull/2719
+#![allow(clippy::use_self)]
+
 pub mod connection_handle;
 pub mod err;
 pub mod jason;

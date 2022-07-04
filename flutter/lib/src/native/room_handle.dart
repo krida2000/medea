@@ -80,11 +80,11 @@ typedef _disableRemoteAudio_Dart = Object Function(Pointer);
 typedef _enableRemoteAudio_C = Handle Function(Pointer);
 typedef _enableRemoteAudio_Dart = Object Function(Pointer);
 
-typedef _disableRemoteVideo_C = Handle Function(Pointer, ForeignValue);
-typedef _disableRemoteVideo_Dart = Object Function(Pointer, ForeignValue);
+typedef _disableRemoteVideo_C = Handle Function(Pointer);
+typedef _disableRemoteVideo_Dart = Object Function(Pointer);
 
-typedef _enableRemoteVideo_C = Handle Function(Pointer, ForeignValue);
-typedef _enableRemoteVideo_Dart = Object Function(Pointer, ForeignValue);
+typedef _enableRemoteVideo_C = Handle Function(Pointer);
+typedef _enableRemoteVideo_Dart = Object Function(Pointer);
 
 final _free = dl.lookupFunction<_free_C, _free_Dart>('RoomHandle__free');
 
@@ -257,25 +257,13 @@ class NativeRoomHandle extends RoomHandle {
   }
 
   @override
-  Future<void> enableRemoteVideo([MediaSourceKind? kind]) async {
-    var kind_arg =
-        kind == null ? ForeignValue.none() : ForeignValue.fromInt(kind.index);
-    try {
-      await (_enableRemoteVideo(ptr.getInnerPtr(), kind_arg.ref) as Future);
-    } finally {
-      kind_arg.free();
-    }
+  Future<void> enableRemoteVideo() async {
+    await (_enableRemoteVideo(ptr.getInnerPtr()) as Future);
   }
 
   @override
-  Future<void> disableRemoteVideo([MediaSourceKind? kind]) async {
-    var kind_arg =
-        kind == null ? ForeignValue.none() : ForeignValue.fromInt(kind.index);
-    try {
-      await (_disableRemoteVideo(ptr.getInnerPtr(), kind_arg.ref) as Future);
-    } finally {
-      kind_arg.free();
-    }
+  Future<void> disableRemoteVideo() async {
+    await (_disableRemoteVideo(ptr.getInnerPtr()) as Future);
   }
 
   @override

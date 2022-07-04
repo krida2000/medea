@@ -3,8 +3,8 @@ import 'dart:ffi';
 import 'package:ffi/ffi.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 
-import '../ffi/foreign_value.dart';
 import 'peer_connection.g.dart' as bridge;
+import '../ffi/foreign_value.dart';
 
 /// Registers [PeerConnection] related functions in Rust.
 void registerFunctions(DynamicLibrary dl) {
@@ -41,11 +41,10 @@ Object _addTransceiver(PeerConnection peer, int kind, int direction) {
 
 /// Returns a newly created [PeerConnection] with the provided `iceServers`
 /// [List].
-Object _newPeer(Object iceServers, bool isForceRelayed) {
+Object _newPeer(Object iceServers) {
   var servers = iceServers as List<dynamic>;
-  var iceType = isForceRelayed ? IceTransportType.relay : IceTransportType.all;
   return () => PeerConnection.create(
-      iceType, servers.map((e) => e as IceServer).toList());
+      IceTransportType.all, servers.map((e) => e as IceServer).toList());
 }
 
 /// Sets the provided [f] to the [PeerConnection.onTrack] callback.

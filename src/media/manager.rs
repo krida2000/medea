@@ -101,7 +101,7 @@ pub enum GetUserMediaError {
     ///
     /// [1]: https://tinyurl.com/w3-streams#dom-mediadevices-getusermedia
     #[display(fmt = "MediaDevices.getUserMedia() failed: {}", _0)]
-    PlatformRequestFailed(platform::GetUserMediaError),
+    PlatformRequestFailed(platform::Error),
 
     /// [`local::Track`] was [`ended`][1] right after [getUserMedia()][2] or
     /// [getDisplayMedia()][3] request.
@@ -210,7 +210,6 @@ impl InnerMediaManager {
     {
         let tracks_from_storage = self
             .get_from_storage(&mut caps)
-            .await
             .into_iter()
             .map(|t| (t, false));
         match caps.into() {
@@ -267,7 +266,7 @@ impl InnerMediaManager {
     ///
     /// [1]: https://tinyurl.com/w3-streams#dom-mediadevices-getusermedia
     /// [2]: https://w3.org/TR/screen-capture#dom-mediadevices-getdisplaymedia
-    async fn get_from_storage(
+    fn get_from_storage(
         &self,
         caps: &mut MediaStreamSettings,
     ) -> Vec<Rc<local::Track>> {
@@ -285,20 +284,25 @@ impl InnerMediaManager {
             .collect();
 
         if caps.is_audio_enabled() {
-            for track in &storage {
-                if caps.get_audio().satisfies(track.as_ref()).await {
-                    caps.set_audio_publish(false);
-                    tracks.push(Rc::clone(track));
-                    break;
-                }
+            let track = storage
+                .iter()
+                .find(|&track| caps.get_audio().satisfies(track.as_ref()))
+                .cloned();
+
+            if let Some(t) = track {
+                caps.set_audio_publish(false);
+                tracks.push(t);
             }
         }
 
-        for track in storage {
-            if caps.unconstrain_if_satisfies_video(track.as_ref()).await {
-                tracks.push(track);
-            }
-        }
+        tracks.extend(
+            storage
+                .iter()
+                .filter(|&track| {
+                    caps.unconstrain_if_satisfies_video(track.as_ref())
+                })
+                .cloned(),
+        );
 
         tracks
     }
@@ -320,7 +324,6 @@ impl InnerMediaManager {
 
         let tracks = self
             .parse_and_save_tracks(tracks, MediaSourceKind::Device)
-            .await
             .map_err(tracerr::map_from_and_wrap!())?;
 
         Ok(tracks)
@@ -343,7 +346,6 @@ impl InnerMediaManager {
 
         let track = self
             .parse_and_save_tracks(tracks, MediaSourceKind::Display)
-            .await
             .map_err(tracerr::map_from_and_wrap!())?;
 
         Ok(track)
@@ -361,23 +363,24 @@ impl InnerMediaManager {
     /// [`MediaManager`]'s tracks storage.
     ///
     /// [1]: https://tinyurl.com/w3-streams#idl-def-MediaStreamTrackState.ended
-    async fn parse_and_save_tracks(
+    fn parse_and_save_tracks(
         &self,
         tracks: Vec<platform::MediaStreamTrack>,
         kind: MediaSourceKind,
     ) -> Result<Vec<Rc<local::Track>>, Traced<LocalTrackIsEndedError>> {
+        let mut storage = self.tracks.borrow_mut();
+
         // Tracks returned by getDisplayMedia()/getUserMedia() request should be
         // `live`. Otherwise, we should err without caching tracks in
         // `MediaManager`. Tracks will be stopped on `Drop`.
         for track in &tracks {
-            if track.ready_state().await != MediaStreamTrackState::Live {
+            if track.ready_state() != MediaStreamTrackState::Live {
                 return Err(tracerr::new!(LocalTrackIsEndedError(
                     track.kind()
                 )));
             }
         }
 
-        let mut storage = self.tracks.borrow_mut();
         let tracks = tracks
             .into_iter()
             .map(|tr| Rc::new(local::Track::new(tr, kind)))

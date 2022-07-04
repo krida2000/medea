@@ -61,7 +61,6 @@ async fn sendrecv_works() {
         .insert_local_tracks(
             &caps
                 .parse_tracks(tracks.into_iter().map(|(t, _)| t).collect())
-                .await
                 .unwrap(),
         )
         .await

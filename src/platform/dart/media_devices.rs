@@ -13,7 +13,7 @@ use crate::{
             dart_future::FutureFromDart, handle::DartHandle, list::DartList,
         },
         utils::callback::Callback,
-        Error, GetUserMediaError,
+        Error,
     },
 };
 
@@ -66,23 +66,6 @@ mod media_devices {
 
         /// Subscribes onto the `MediaDevices`'s `devicechange` event.
         pub fn on_device_change(cb: Dart_Handle);
-
-        /// Returns the kind of the Dart side `GetMediaException`.
-        pub fn get_media_exception_kind(exception: Dart_Handle) -> i64;
-    }
-}
-
-impl From<Error> for GetUserMediaError {
-    fn from(err: Error) -> Self {
-        let kind = unsafe {
-            media_devices::get_media_exception_kind(err.get_handle())
-        };
-
-        match kind {
-            0 => Self::Audio(err),
-            1 => Self::Video(err),
-            _ => Self::Unknown(err),
-        }
     }
 }
 
@@ -140,14 +123,14 @@ impl MediaDevices {
     pub async fn get_user_media(
         &self,
         caps: MediaStreamConstraints,
-    ) -> Result<Vec<MediaStreamTrack>, Traced<GetUserMediaError>> {
+    ) -> Result<Vec<MediaStreamTrack>, Traced<Error>> {
         let tracks = unsafe {
             FutureFromDart::execute::<DartHandle>(
                 media_devices::get_user_media(caps.into()),
             )
             .await
         }
-        .map_err(tracerr::from_and_wrap!())?;
+        .map_err(tracerr::wrap!())?;
 
         let tracks = Vec::from(DartList::from(tracks))
             .into_iter()

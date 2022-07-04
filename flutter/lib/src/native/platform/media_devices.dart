@@ -1,6 +1,7 @@
 import 'dart:ffi';
 
 import 'package:ffi/ffi.dart';
+
 import 'package:flutter_webrtc/flutter_webrtc.dart' as webrtc;
 
 import 'media_devices.g.dart' as bridge;
@@ -18,7 +19,6 @@ void registerFunctions(DynamicLibrary dl) {
         Pointer.fromFunction(_microphoneVolumeIsAvailable),
     microphoneVolume: Pointer.fromFunction(_microphoneVolume),
     onDeviceChange: Pointer.fromFunction(_onDeviceChange),
-    getMediaExceptionKind: Pointer.fromFunction(_getMediaExceptionKind, 0),
   );
 }
 
@@ -63,9 +63,4 @@ Object _microphoneVolume() {
 /// Subscribes onto the `MediaDevices`'s `devicechange` event.
 void _onDeviceChange(Function cb) {
   webrtc.onDeviceChange(() => cb(null));
-}
-
-/// Returns the kind of the `GetMediaException`.
-int _getMediaExceptionKind(webrtc.GetMediaException exception) {
-  return exception.kind().index;
 }

@@ -723,8 +723,6 @@ impl RoomHandle {
 
     /// Disables inbound video in this [`Room`].
     ///
-    /// Affects only video with the specific [`MediaSourceKind`], if specified.
-    ///
     /// # Errors
     ///
     /// With [`ChangeMediaStateError::Detached`] if an inner [`Weak`] pointer
@@ -735,13 +733,12 @@ impl RoomHandle {
     /// media server didn't approve this state transition.
     pub fn disable_remote_video(
         &self,
-        source_kind: Option<MediaSourceKind>,
     ) -> impl Future<Output = ChangeMediaStateResult> + 'static {
         self.change_media_state(
             media_exchange_state::Stable::Disabled,
             MediaKind::Video,
             TrackDirection::Recv,
-            source_kind,
+            None,
         )
         .map_err(tracerr::map_from_and_wrap!())
     }
@@ -770,8 +767,6 @@ impl RoomHandle {
 
     /// Enables inbound video in this [`Room`].
     ///
-    /// Affects only video with the specific [`MediaSourceKind`], if specified.
-    ///
     /// # Errors
     ///
     /// With [`ChangeMediaStateError::Detached`] if an inner [`Weak`] pointer
@@ -782,13 +777,12 @@ impl RoomHandle {
     /// media server didn't approve this state transition.
     pub fn enable_remote_video(
         &self,
-        source_kind: Option<MediaSourceKind>,
     ) -> impl Future<Output = ChangeMediaStateResult> + 'static {
         self.change_media_state(
             media_exchange_state::Stable::Enabled,
             MediaKind::Video,
             TrackDirection::Recv,
-            source_kind,
+            None,
         )
         .map_err(tracerr::map_from_and_wrap!())
     }
@@ -1181,11 +1175,7 @@ impl InnerRoom {
                     .set_media_state(state, kind, source_kind);
             }
             (Recv, MediaExchange(exchange)) => {
-                self.recv_constraints.set_enabled(
-                    exchange == Enabled,
-                    kind,
-                    source_kind,
-                );
+                self.recv_constraints.set_enabled(exchange == Enabled, kind);
             }
             (Recv, Mute(_)) => {
                 unreachable!("Receivers muting is not implemented");

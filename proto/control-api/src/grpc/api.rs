@@ -1,16 +1,16 @@
-/// Request for creating a new `Element` on a media server.
+/// Request of creating new Element with in element with a given FID (full ID).
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct CreateRequest {
-    /// FID (Full ID) of the parent `Element` to create the provided `Element` in.
+    /// FID (full ID) of the Element in which the provided Element will be created.
     #[prost(string, tag="1")]
     pub parent_fid: ::prost::alloc::string::String,
-    /// Spec of the created `Element`.
+    /// Spec of the created Element.
     #[prost(oneof="create_request::El", tags="2, 3, 4, 5")]
     pub el: ::core::option::Option<create_request::El>,
 }
 /// Nested message and enum types in `CreateRequest`.
 pub mod create_request {
-    /// Spec of the created `Element`.
+    /// Spec of the created Element.
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum El {
         #[prost(message, tag="2")]
@@ -23,26 +23,26 @@ pub mod create_request {
         WebrtcPub(super::WebRtcPublishEndpoint),
     }
 }
-/// Request with many FIDs (Full IDs) of `Element`s.
+/// Request with many FIDs (full IDs) of Elements.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct IdRequest {
-    /// List of `Element`s FIDs.
+    /// List of Elements FIDs.
     #[prost(string, repeated, tag="1")]
     pub fid: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
 }
-/// Request for applying a spec to an exiting `Element` on a media server.
+/// Request of applying a spec to Element with the given FID (full ID).
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ApplyRequest {
-    /// FID (full ID) of the parent `Element` to apply the provided spec to.
+    /// FID (full ID) of the Element to apply the given spec to.
     #[prost(string, tag="1")]
     pub parent_fid: ::prost::alloc::string::String,
-    /// Spec of the `Element` to be applied.
+    /// Spec of the Element to be applied.
     #[prost(oneof="apply_request::El", tags="2, 3, 4, 5")]
     pub el: ::core::option::Option<apply_request::El>,
 }
 /// Nested message and enum types in `ApplyRequest`.
 pub mod apply_request {
-    /// Spec of the `Element` to be applied.
+    /// Spec of the Element to be applied.
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum El {
         #[prost(message, tag="2")]
@@ -55,73 +55,73 @@ pub mod apply_request {
         WebrtcPub(super::WebRtcPublishEndpoint),
     }
 }
-/// Response which doesn't return anything on success, but is fallible with an
-/// `Error`.
+/// Response which doesn't return anything on successful result,
+/// but is fallible with an Error.
 ///
-/// If operation fails then an `Error` will be returned.
-/// The response is considered successful only if it doesn't contain an `Error`.
+/// If operation fails then an Error will be returned.
+/// The response is considered successful only if it does not contain Error.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct Response {
-    /// Error of this `Response`.
+    /// Error of the Response.
     #[prost(message, optional, tag="1")]
     pub error: ::core::option::Option<Error>,
 }
-/// Response of `ControlApi.Create` RPC method.
+/// Response of Create RPC method.
 ///
-/// If operation fails then an `Error` will be returned.
-/// The response is considered successful only if it doesn't contain an `Error`.
+/// If operation fails then an Error will be returned.
+/// The response is considered successful only if it does not contain Error.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct CreateResponse {
-    /// Hashmap with IDs (key) and URIs (value) of `Element`s, which should be used
+    /// Hashmap with IDs (key) and URIs (value) of Elements, which should be used
     /// by clients to connect to a media server via Client API.
     ///
-    /// Returned only if this `CreateResponse` is successful.
+    /// Returned only if CreateResponse is successful.
     #[prost(map="string, string", tag="1")]
     pub sid: ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
-    /// Error of this `CreateResponse`.
+    /// Error of the CreateResponse.
     #[prost(message, optional, tag="2")]
     pub error: ::core::option::Option<Error>,
 }
-/// Response of `ControlApi.Get` RPC method.
+/// Response of Get RPC method.
 ///
-/// If operation fails then an `Error` will be returned.
-/// The response is considered successful only if it doesn't contain an `Error`.
+/// If operation fails then an Error will be returned.
+/// The response is considered successful only if it does not contain Error.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GetResponse {
-    /// Hashmap with IDs (key) and specs (value) of the requested `Elements`.
+    /// Hashmap with IDs (key) and specs (value) of the requested Elements.
     ///
-    /// Returned only if this `GetResponse` is successful.
+    /// Returned only if GetResponse is successful.
     #[prost(map="string, message", tag="1")]
     pub elements: ::std::collections::HashMap<::prost::alloc::string::String, Element>,
-    /// Error of this `GetResponse`.
+    /// Error of the GetResponse.
     #[prost(message, optional, tag="2")]
     pub error: ::core::option::Option<Error>,
 }
-/// Error of a failed request.
+/// Error of failed request.
 ///
-/// If an `Error` is not returned then a request is considered as successful.
+/// If the Error is not returned then request is considered as successful.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct Error {
-    /// Concrete unique code of this `Error`.
+    /// Concrete unique code of the Error.
     #[prost(uint32, tag="1")]
     pub code: u32,
-    /// Human-readable text description of this `Error`.
+    /// Human-readable text description of the Error.
     #[prost(string, tag="2")]
     pub text: ::prost::alloc::string::String,
-    /// Link to online documentation of this `Error`.
+    /// Link to online documentation of the Error.
     ///
     /// Optional field.
     #[prost(string, tag="3")]
     pub doc: ::prost::alloc::string::String,
-    /// FID (Full ID) of the `Element` that this `Error` is related to.
-    /// Some `Error`s are not related to any `Element` and so have this field
-    /// empty.
+    /// Full ID of Element that the Error is related to.
+    /// Some Errors are not related to any Element and in such case
+    /// this field is empty.
     ///
     /// Optional field.
     #[prost(string, tag="4")]
     pub element: ::prost::alloc::string::String,
 }
-/// Possible media elements forming a media pipeline.
+/// Media element which can be used in a media pipeline.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct Element {
     #[prost(oneof="element::El", tags="1, 2, 3, 4")]
@@ -141,20 +141,20 @@ pub mod element {
         WebrtcPub(super::WebRtcPublishEndpoint),
     }
 }
-/// Media element representing a single space where multiple `Member`s can
+/// Media element which represents a single space where multiple Members can
 /// interact with each other.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct Room {
-    /// ID of this `Room`.
+    /// ID of this Room.
     #[prost(string, tag="1")]
     pub id: ::prost::alloc::string::String,
-    /// Media pipeline representing this `Room`.
+    /// Pipeline of this Room.
     #[prost(map="string, message", tag="2")]
     pub pipeline: ::std::collections::HashMap<::prost::alloc::string::String, room::Element>,
 }
 /// Nested message and enum types in `Room`.
 pub mod room {
-    /// Possible media elements forming a `Room` pipeline.
+    /// Elements which Room's pipeline can contain.
     #[derive(Clone, PartialEq, ::prost::Message)]
     pub struct Element {
         #[prost(oneof="element::El", tags="1, 2, 3")]
@@ -173,47 +173,44 @@ pub mod room {
         }
     }
 }
-/// Media element representing a client authorized to participate in some bigger
-/// media pipeline (`Room`, for example).
+/// Media element which represents a client authorized to participate
+/// in a some bigger media pipeline.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct Member {
-    /// ID of this `Member`.
+    /// ID of this Member.
     #[prost(string, tag="1")]
     pub id: ::prost::alloc::string::String,
-    /// URL of the callback to fire when this `Member` establishes a persistent
-    /// connection with a media server via Client API.
+    /// Callback which fires when the Member establishes persistent connection
+    /// with a media server via Client API.
     #[prost(string, tag="2")]
     pub on_join: ::prost::alloc::string::String,
-    /// URL of the callback to fire when this `Member` finishes a persistent
-    /// connection with a media server via Client API.
+    /// Callback which fires when the Member finishes persistent connection
+    /// with a media server via Client API.
     #[prost(string, tag="3")]
     pub on_leave: ::prost::alloc::string::String,
-    /// Timeout of receiving heartbeat messages from this `Member` via Client API.
-    /// Once reached, this `Member` is considered being idle.
+    /// Timeout of receiving heartbeat messages from the Member via Client API.
+    /// Once reached, the Member is considered being idle.
     #[prost(message, optional, tag="6")]
     pub idle_timeout: ::core::option::Option<::prost_types::Duration>,
-    /// Timeout of reconnecting this `Member` via Client API.
-    /// Once reached, this `Member` is considered disconnected.
+    /// Timeout of the Member reconnecting via Client API.
+    /// Once reached, the Member is considered disconnected.
     #[prost(message, optional, tag="7")]
     pub reconnect_timeout: ::core::option::Option<::prost_types::Duration>,
-    /// Interval of pinging with heartbeat messages this `Member` via Client API
-    /// by a media server.
-    /// If empty then the default interval of a media server is used, if
-    /// configured.
+    /// Interval of sending pings from a media server to the Member via Client API.
     #[prost(message, optional, tag="8")]
     pub ping_interval: ::core::option::Option<::prost_types::Duration>,
-    /// Media pipeline representing this `Member`.
+    /// Pipeline of this Member.
     #[prost(map="string, message", tag="9")]
     pub pipeline: ::std::collections::HashMap<::prost::alloc::string::String, member::Element>,
-    /// Credentials to authenticate this `Member` in Client API with.
+    /// Credentials of the Member to authorize via Client API with.
     ///
     /// Plain and hashed credentials are supported. If no credentials provided,
     /// then random plain string will be generated. If no authentication is
     /// required then empty plain string can be used.
     ///
     /// Hashed variant only supports Argon2 hash at the moment.
-    /// `Member` sid won't contain a `token` query parameter if hashed credentials
-    /// are used, so it should be appended manually on a client side.
+    /// Member sid won't contain token if hashed credentials are used, so token
+    /// query parameter should be appended manually.
     #[prost(oneof="member::Credentials", tags="4, 5")]
     pub credentials: ::core::option::Option<member::Credentials>,
 }
@@ -235,15 +232,15 @@ pub mod member {
             WebrtcPub(super::super::WebRtcPublishEndpoint),
         }
     }
-    /// Credentials to authenticate this `Member` in Client API with.
+    /// Credentials of the Member to authorize via Client API with.
     ///
     /// Plain and hashed credentials are supported. If no credentials provided,
     /// then random plain string will be generated. If no authentication is
     /// required then empty plain string can be used.
     ///
     /// Hashed variant only supports Argon2 hash at the moment.
-    /// `Member` sid won't contain a `token` query parameter if hashed credentials
-    /// are used, so it should be appended manually on a client side.
+    /// Member sid won't contain token if hashed credentials are used, so token
+    /// query parameter should be appended manually.
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Credentials {
         /// Argon2 hash of credentials.
@@ -254,118 +251,117 @@ pub mod member {
         Plain(::prost::alloc::string::String),
     }
 }
-/// Media element receiving media data from a client via WebRTC (allows to
-/// publish media data).
+/// Media element which is able to receive media data from a client via WebRTC
+/// (allows to publish media data).
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct WebRtcPublishEndpoint {
-    /// ID of this `WebRtcPublishEndpoint`.
+    /// ID of this WebRtcPublishEndpoint.
     #[prost(string, tag="1")]
     pub id: ::prost::alloc::string::String,
-    /// Peer-to-peer mode of this `WebRtcPublishEndpoint`.
+    /// P2P mode for this element.
     #[prost(enumeration="web_rtc_publish_endpoint::P2p", tag="2")]
     pub p2p: i32,
-    /// Callback firing when a client starts publishing media data.
+    /// Callback which fires when a client starts publishing media data.
     #[prost(string, tag="3")]
     pub on_start: ::prost::alloc::string::String,
-    /// Callback firing when a client stops publishing media data.
+    /// Callback which fires when a client stops publishing media data.
     #[prost(string, tag="4")]
     pub on_stop: ::prost::alloc::string::String,
-    /// Indicator whether to relay all media data through a TURN server forcibly.
+    /// Option to relay all media through a TURN server forcibly.
     #[prost(bool, tag="5")]
     pub force_relay: bool,
-    /// Settings for the audio media type of this `WebRtcPublishEndpoint`.
+    /// Settings for the audio media type of this element.
     #[prost(message, optional, tag="6")]
     pub audio_settings: ::core::option::Option<web_rtc_publish_endpoint::AudioSettings>,
-    /// Settings for the video media type of this `WebRtcPublishEndpoint`.
+    /// Settings for the video media type of this element.
     #[prost(message, optional, tag="7")]
     pub video_settings: ::core::option::Option<web_rtc_publish_endpoint::VideoSettings>,
 }
 /// Nested message and enum types in `WebRtcPublishEndpoint`.
 pub mod web_rtc_publish_endpoint {
-    /// Audio media type settings of a `WebRtcPublishEndpoint`.
+    /// Audio media type settings of WebRtcPublishEndpoint.
     #[derive(Clone, PartialEq, ::prost::Message)]
     pub struct AudioSettings {
-        /// Policy to publish the audio media type with.
+        /// Policy to publish audio media type with.
         #[prost(enumeration="PublishPolicy", tag="1")]
         pub publish_policy: i32,
     }
-    /// Video media type settings of `WebRtcPublishEndpoint`.
+    /// Video media type settings of WebRtcPublishEndpoint.
     #[derive(Clone, PartialEq, ::prost::Message)]
     pub struct VideoSettings {
-        /// Policy to publish the video media type with.
+        /// Policy to publish video media type with.
         #[prost(enumeration="PublishPolicy", tag="1")]
         pub publish_policy: i32,
     }
-    /// Policy of how a video or an audio media type can be published in a
-    /// `WebRtcPublishEndpoint`.
+    /// Policy of how the video or audio media type can be published in
+    /// WebRtcPublishEndpoint.
     #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
     #[repr(i32)]
     pub enum PublishPolicy {
         /// Media type MAY be published.
         ///
         /// Media server will try to initialize publishing, but won't produce any
-        /// errors if user application fails to (or chooses not to) acquire the
+        /// errors if user application fails to (or chooses not to) acquire a
         /// required media track. Media server will approve user requests to stop and
         /// to restart publishing the specified media type.
         Optional = 0,
         /// Media type MUST be published.
         ///
-        /// Media server will try to initialize publishing, and if the required media
-        /// track cannot be acquired, then an error will be thrown. Media server will
-        /// deny all requests to stop publishing.
+        /// Media server will try to initialize publishing, and if a required media
+        /// track couldn't be acquired, then an error will be thrown. Media server
+        /// will deny all requests to stop publishing.
         Required = 1,
-        /// Media type MUST NOT be published.
+        /// Media type MUST not be published.
         ///
         /// Media server will not try to initialize publishing.
         Disabled = 2,
     }
-    /// Possible peer-to-peer modes of WebRTC interaction in a
-    /// `WebRtcPublishEndpoint`.
+    /// P2P mode of WebRTC interaction.
     #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
     #[repr(i32)]
     pub enum P2p {
-        /// Never use peer-to-peer connections and always send media data through a
-        /// media server.
+        /// Always send media data through a media server.
         Never = 0,
-        /// Use peer-to-peer connections directly if it's possible, otherwise send
-        /// media data through a media server.
+        /// Send media data peer-to-peer directly if it's possible,
+        /// otherwise through a media server.
         IfPossible = 1,
-        /// Send media data via peer-to-peer connections only, and never through a
-        /// media server.
+        /// Send media data peer-to-peer only without a media server.
         Always = 2,
     }
 }
-/// Media element playing media data for a client via WebRTC.
+/// Media element which is able to play media data for a client via WebRTC.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct WebRtcPlayEndpoint {
-    /// ID of this `WebRtcPlayEndpoint`.
+    /// ID of this WebRtcPlayEndpoint.
     #[prost(string, tag="1")]
     pub id: ::prost::alloc::string::String,
-    //// Source to play media data from.
+    /// The source to get media data from.
     #[prost(string, tag="2")]
     pub src: ::prost::alloc::string::String,
-    /// Callback firing when a client starts playing media data from the source.
+    /// Callback which fires when a client starts playing media data
+    /// from the source.
     #[prost(string, tag="3")]
     pub on_start: ::prost::alloc::string::String,
-    /// Callback firing when a client stops playing media data from the source.
+    /// Callback which fires when a client stops playing media data
+    /// from the source.
     #[prost(string, tag="4")]
     pub on_stop: ::prost::alloc::string::String,
-    /// Indicator whether to relay all media data through a TURN server forcibly.
+    /// Option to relay all media through a TURN server forcibly.
     #[prost(bool, tag="5")]
     pub force_relay: bool,
 }
-/// Ping message received by a media server periodically for probing its
+/// Ping message received by media server periodically for probing its
 /// healthiness.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct Ping {
-    /// Each new `Ping` should increment its nonce, starting with 0.
+    /// Each ping should increase its nonce, starting with 0.
     #[prost(uint32, tag="1")]
     pub nonce: u32,
 }
-/// Pong message sent by a media server in response to a received `Ping` message.
+/// Pong message send by media server in response to received Ping message.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct Pong {
-    //// Nonce of the answered `Ping` message.
+    //// Nonce of the received Ping message.
     #[prost(uint32, tag="1")]
     pub nonce: u32,
 }
@@ -373,8 +369,7 @@ pub struct Pong {
 pub mod control_api_client {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
-    /// Service allowing to control a media server dynamically, by creating, updating
-    /// and destroying pipelines of media `Element`s on it.
+    /// Media server's Control API service.
     #[derive(Debug, Clone)]
     pub struct ControlApiClient<T> {
         inner: tonic::client::Grpc<T>,
@@ -435,9 +430,9 @@ pub mod control_api_client {
             self.inner = self.inner.accept_gzip();
             self
         }
-        /// Creates a new `Element` on the media server.
+        /// Creates new Element with a given ID.
         ///
-        /// Non-idempotent. Errors if an `Element` with such ID already exists.
+        /// Not idempotent. Errors if an Element with the same ID already exists.
         pub async fn create(
             &mut self,
             request: impl tonic::IntoRequest<super::CreateRequest>,
@@ -455,10 +450,10 @@ pub mod control_api_client {
             let path = http::uri::PathAndQuery::from_static("/api.ControlApi/Create");
             self.inner.unary(request.into_request(), path, codec).await
         }
-        /// Removes `Element`s from the media server.
-        /// Allows referring multiple `Element`s on the last two levels of a FID.
+        /// Removes Element by its ID.
+        /// Allows referring multiple Elements on the last two levels.
         ///
-        /// Idempotent. If no `Element`s with such FIDs exist, then succeeds.
+        /// Idempotent. If no Elements with such IDs exist, then succeeds.
         pub async fn delete(
             &mut self,
             request: impl tonic::IntoRequest<super::IdRequest>,
@@ -476,9 +471,9 @@ pub mod control_api_client {
             let path = http::uri::PathAndQuery::from_static("/api.ControlApi/Delete");
             self.inner.unary(request.into_request(), path, codec).await
         }
-        /// Lookups `Element`s by their FIDs on the media server.
-        /// If no FIDs are specified, then returns all the current `Element`s on the
-        /// media server.
+        /// Returns Element by its ID.
+        /// Allows referring multiple Elements.
+        /// If no ID specified, returns all Elements declared.
         pub async fn get(
             &mut self,
             request: impl tonic::IntoRequest<super::IdRequest>,
@@ -496,13 +491,11 @@ pub mod control_api_client {
             let path = http::uri::PathAndQuery::from_static("/api.ControlApi/Get");
             self.inner.unary(request.into_request(), path, codec).await
         }
-        /// Applies changes to an existing `Element` on the media server, or creates a
-        /// new one in case there is no `Element` with such ID.
+        /// Applies the given spec to Element by its ID.
         ///
-        /// Idempotent. If no `Element` with such ID exists, then it will be created,
-        /// otherwise it will be reconfigured. `Element`s that exist on the same
-        /// hierarchy level, but are not specified in the provided spec, will be
-        /// removed.
+        /// Idempotent. If no Element with such ID exists, then it will be created,
+        /// otherwise it will be reconfigured. Elements that exist, but are not
+        /// specified in the provided spec will be removed.
         pub async fn apply(
             &mut self,
             request: impl tonic::IntoRequest<super::ApplyRequest>,
@@ -520,9 +513,7 @@ pub mod control_api_client {
             let path = http::uri::PathAndQuery::from_static("/api.ControlApi/Apply");
             self.inner.unary(request.into_request(), path, codec).await
         }
-        /// Checks healthiness of the media server.
-        /// Caller should assert that the returned `Pong` has the same nonce as the
-        /// sent `Ping`.
+        /// Checks media server healthiness.
         pub async fn healthz(
             &mut self,
             request: impl tonic::IntoRequest<super::Ping>,
@@ -549,49 +540,44 @@ pub mod control_api_server {
     ///Generated trait containing gRPC methods that should be implemented for use with ControlApiServer.
     #[async_trait]
     pub trait ControlApi: Send + Sync + 'static {
-        /// Creates a new `Element` on the media server.
+        /// Creates new Element with a given ID.
         ///
-        /// Non-idempotent. Errors if an `Element` with such ID already exists.
+        /// Not idempotent. Errors if an Element with the same ID already exists.
         async fn create(
             &self,
             request: tonic::Request<super::CreateRequest>,
         ) -> Result<tonic::Response<super::CreateResponse>, tonic::Status>;
-        /// Removes `Element`s from the media server.
-        /// Allows referring multiple `Element`s on the last two levels of a FID.
+        /// Removes Element by its ID.
+        /// Allows referring multiple Elements on the last two levels.
         ///
-        /// Idempotent. If no `Element`s with such FIDs exist, then succeeds.
+        /// Idempotent. If no Elements with such IDs exist, then succeeds.
         async fn delete(
             &self,
             request: tonic::Request<super::IdRequest>,
         ) -> Result<tonic::Response<super::Response>, tonic::Status>;
-        /// Lookups `Element`s by their FIDs on the media server.
-        /// If no FIDs are specified, then returns all the current `Element`s on the
-        /// media server.
+        /// Returns Element by its ID.
+        /// Allows referring multiple Elements.
+        /// If no ID specified, returns all Elements declared.
         async fn get(
             &self,
             request: tonic::Request<super::IdRequest>,
         ) -> Result<tonic::Response<super::GetResponse>, tonic::Status>;
-        /// Applies changes to an existing `Element` on the media server, or creates a
-        /// new one in case there is no `Element` with such ID.
+        /// Applies the given spec to Element by its ID.
         ///
-        /// Idempotent. If no `Element` with such ID exists, then it will be created,
-        /// otherwise it will be reconfigured. `Element`s that exist on the same
-        /// hierarchy level, but are not specified in the provided spec, will be
-        /// removed.
+        /// Idempotent. If no Element with such ID exists, then it will be created,
+        /// otherwise it will be reconfigured. Elements that exist, but are not
+        /// specified in the provided spec will be removed.
         async fn apply(
             &self,
             request: tonic::Request<super::ApplyRequest>,
         ) -> Result<tonic::Response<super::CreateResponse>, tonic::Status>;
-        /// Checks healthiness of the media server.
-        /// Caller should assert that the returned `Pong` has the same nonce as the
-        /// sent `Ping`.
+        /// Checks media server healthiness.
         async fn healthz(
             &self,
             request: tonic::Request<super::Ping>,
         ) -> Result<tonic::Response<super::Pong>, tonic::Status>;
     }
-    /// Service allowing to control a media server dynamically, by creating, updating
-    /// and destroying pipelines of media `Element`s on it.
+    /// Media server's Control API service.
     #[derive(Debug)]
     pub struct ControlApiServer<T: ControlApi> {
         inner: _Inner<T>,

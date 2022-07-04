@@ -84,13 +84,13 @@ class WebRoomHandle extends RoomHandle {
   }
 
   @override
-  Future<void> enableRemoteVideo([MediaSourceKind? kind]) async {
-    await fallibleFuture(obj.enable_remote_video(kind?.index));
+  Future<void> enableRemoteVideo() async {
+    await fallibleFuture(obj.enable_remote_video());
   }
 
   @override
-  Future<void> disableRemoteVideo([MediaSourceKind? kind]) async {
-    await fallibleFuture(obj.disable_remote_video(kind?.index));
+  Future<void> disableRemoteVideo() async {
+    await fallibleFuture(obj.disable_remote_video());
   }
 
   @override
@@ -123,9 +123,7 @@ class WebRoomHandle extends RoomHandle {
 
   @override
   void onFailedLocalMedia(void Function(Object) f) {
-    fallibleFunction(() => obj.on_failed_local_media(allowInterop((e) {
-          f(convertException(e));
-        })));
+    fallibleFunction(() => obj.on_failed_local_media(allowInterop(f)));
   }
 
   @moveSemantics

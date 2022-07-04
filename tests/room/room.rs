@@ -1688,11 +1688,11 @@ async fn remote_disable_enable_video() {
     .await;
 
     let room_handle = api::RoomHandle::from(room.new_handle());
-    assert!(JsFuture::from(room_handle.disable_remote_video(None))
+    assert!(JsFuture::from(room_handle.disable_remote_video())
         .await
         .is_ok());
     assert!(!peer.is_recv_video_enabled());
-    assert!(JsFuture::from(room_handle.enable_remote_video(None))
+    assert!(JsFuture::from(room_handle.enable_remote_video())
         .await
         .is_ok());
     assert!(peer.is_recv_video_enabled());
@@ -1774,7 +1774,7 @@ async fn enable_by_server() {
     assert_eq!(mock.get_user_media_requests_count(), 2);
     mock.stop();
     let sender = peer.get_sender_by_id(audio_track_id).unwrap();
-    assert!(sender.get_send_track().is_some());
+    assert!(sender.transceiver().send_track().is_some());
 }
 
 /// Checks that only one get user media request will be performed on

@@ -55,7 +55,6 @@ async fn get_test_media_connections(
         .insert_local_tracks(
             &caps
                 .parse_tracks(tracks.into_iter().map(|(t, _)| t).collect())
-                .await
                 .unwrap(),
         )
         .await

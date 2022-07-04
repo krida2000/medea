@@ -1,5 +1,7 @@
 //! General JS side library interface.
 
+#![allow(clippy::new_without_default)]
+
 use derive_more::From;
 use wasm_bindgen::prelude::*;
 
@@ -13,7 +15,7 @@ use crate::{
 /// Responsible for managing shared transports, local media and room
 /// initialization.
 #[wasm_bindgen]
-#[derive(Debug, Default, From)]
+#[derive(Debug, From)]
 pub struct Jason(jason::Jason);
 
 #[allow(clippy::unused_unit)]

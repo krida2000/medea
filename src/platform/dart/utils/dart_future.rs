@@ -205,7 +205,7 @@ pub mod tests {
             let val = FutureFromDart::execute::<DartHandle>(future.get())
                 .await
                 .unwrap();
-            (TEST_FUTURE_HANDLE_FUNCTION.unwrap())(val.get());
+            unsafe { (TEST_FUTURE_HANDLE_FUNCTION.unwrap())(val.get()) }
             Ok(())
         }
         .into_dart_future()

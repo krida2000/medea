@@ -40,7 +40,7 @@ async fn video_constraints_satisfies() {
     let track = tracks.pop().unwrap().0;
 
     assert_eq!(track.kind(), MediaKind::Video);
-    assert!(track_constraints.satisfies(track.as_ref()).await);
+    assert!(track_constraints.satisfies(track.as_ref()));
 }
 
 // 1. Get device id of non default audio device from enumerate_devices();
@@ -65,7 +65,7 @@ async fn audio_constraints_satisfies() {
     let track = tracks.pop().unwrap().0;
 
     assert_eq!(track.kind(), MediaKind::Audio);
-    assert!(track_constraints.satisfies(track.as_ref()).await);
+    assert!(track_constraints.satisfies(track.as_ref()));
 }
 
 // 1. Get device id of non default video device from enumerate_devices();
@@ -114,10 +114,10 @@ async fn both_constraints_satisfies() {
     let video_track = video.pop().unwrap().0;
 
     assert_eq!(audio_track.kind(), MediaKind::Audio);
-    assert!(audio_constraints.satisfies(audio_track.as_ref()).await);
+    assert!(audio_constraints.satisfies(audio_track.as_ref()));
 
     assert_eq!(video_track.kind(), MediaKind::Video);
-    assert!(video_constraints.satisfies(video_track.as_ref()).await);
+    assert!(video_constraints.satisfies(video_track.as_ref()));
 }
 
 // 1. Get device id of non default audio and video device from
@@ -577,15 +577,11 @@ async fn simultaneous_device_and_display() {
 
     let audio_track = audio.pop().unwrap().0;
     assert_eq!(audio_track.kind(), MediaKind::Audio);
-    assert!(audio_constraints.satisfies(audio_track.as_ref()).await);
+    assert!(audio_constraints.satisfies(audio_track.as_ref()));
 
     let display_video_track = video.pop().unwrap().0;
     assert_eq!(display_video_track.kind(), MediaKind::Video);
-    assert!(
-        display_video_constraints
-            .satisfies(display_video_track.as_ref())
-            .await,
-    );
+    assert!(display_video_constraints.satisfies(display_video_track.as_ref()));
     assert_eq!(
         display_video_track.media_source_kind(),
         MediaSourceKind::Display
@@ -593,13 +589,9 @@ async fn simultaneous_device_and_display() {
 
     let device_video_track = video.pop().unwrap().0;
     assert_eq!(device_video_track.kind(), MediaKind::Video);
-    assert!(
-        device_video_constraints
-            .satisfies(device_video_track.as_ref())
-            .await,
-    );
+    assert!(device_video_constraints.satisfies(device_video_track.as_ref()));
     assert_eq!(
         device_video_track.media_source_kind(),
-        MediaSourceKind::Device,
+        MediaSourceKind::Device
     );
 }
