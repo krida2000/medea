@@ -6,6 +6,32 @@ All user visible changes to this project will be documented in this file. This p
 
 
 
+## [0.8.0] · 2022-??-?? · To-be-done
+[0.8.0]: /../../tree/medea-control-api-proto-0.8.0/proto/control-api
+
+[Diff](/../../compare/medea-control-api-proto-0.7.0...medea-control-api-proto-0.8.0)
+
+### Added
+
+- Abstractions:
+    - `ControlApi` and `CallbackApi` ([#55]).
+- gRPC:
+    - `ControlApi` and `CallbackApi` implementations ([#56]).
+- Direct:
+    - `ControlApi` and `CallbackApi` implementations ([#65]).
+- Cargo features:
+    - `client` and `server` ([#56]);
+    - `serde` ([#67]);
+    - `client-api` ([#68]).
+
+[#55]: /../../pull/55
+[#56]: /../../pull/56
+[#67]: /../../pull/67
+[#68]: /../../pull/68
+
+
+
+
 ## [0.7.0] · 2022-05-05
 [0.7.0]: /../../tree/medea-control-api-proto-0.7.0/proto/control-api
 

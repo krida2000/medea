@@ -2,8 +2,8 @@ import 'dart:ffi';
 
 import 'package:ffi/ffi.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
-import 'package:medea_jason/src/native/ffi/foreign_value.dart';
 
+import 'package:medea_jason/src/native/ffi/foreign_value.dart';
 import 'media_track.g.dart' as bridge;
 
 /// Registers [MediaStreamTrack] related functions in Rust.
@@ -21,7 +21,7 @@ void registerFunctions(DynamicLibrary dl) {
     stop: Pointer.fromFunction(_stop),
     onEnded: Pointer.fromFunction(_onEnded),
     clone: Pointer.fromFunction(_clone),
-    readyState: Pointer.fromFunction(_readyState, 0),
+    readyState: Pointer.fromFunction(_readyState),
   );
 }
 
@@ -54,9 +54,8 @@ Pointer<Utf8> _deviceId(MediaStreamTrack track) {
   return track.deviceId().toNativeUtf8();
 }
 
-int _readyState(MediaStreamTrack track) {
-  // TODO: Correct implementation requires flutter_webrtc-side fixes.
-  throw UnimplementedError();
+Object _readyState(MediaStreamTrack track) {
+  return () => track.state().then((s) => s.index);
 }
 
 /// Returns facingMode of the provided [MediaStreamTrack].

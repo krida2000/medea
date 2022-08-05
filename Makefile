@@ -20,11 +20,11 @@ IMAGE_NAME := $(strip \
 	$(if $(call eq,$(image),medea-demo-edge),medea-demo,\
 	$(or $(image),medea-control-api-mock)))
 
-RUST_VER := 1.60
-CHROME_VERSION := 99.0
+RUST_VER := 1.62
+CHROME_VERSION := 102.0
 FIREFOX_VERSION := 97.0.1-driver0.30.0
 
-CARGO_NDK_VER := 2.5.0-ndkr23b-rust$(RUST_VER)
+CARGO_NDK_VER := 2.8.0-ndkr23b-rust$(RUST_VER)
 ANDROID_TARGETS := aarch64-linux-android \
                    armv7-linux-androideabi \
                    i686-linux-android \
@@ -335,9 +335,9 @@ cargo.fmt:
 
 cargo.gen:
 ifeq ($(crate),medea-control-api-proto)
-	@rm -rf $(crate-dir)/src/grpc/api*.rs
-	cd $(crate-dir)/ && \
-	cargo build
+	@rm -rf $(crate-dir)/src/grpc/api.rs \
+	        $(crate-dir)/src/grpc/callback.rs
+	cargo build -p $(crate) --all-features
 endif
 ifeq ($(crate),medea-jason)
 	cargo clean -p $(crate)
@@ -440,6 +440,11 @@ flutter:
 flutter.fmt:
 	flutter format $(if $(call eq,$(check),yes),-n --set-exit-if-changed,) \
 		flutter/
+ifeq ($(wildcard flutter/.packages),)
+	@make flutter cmd='pub get'
+endif
+	@make flutter cmd='pub run import_sorter:main --no-comments \
+	                   $(if $(call eq,$(check),yes),--exit-if-changed,)'
 
 
 # Lint Flutter Dart sources with dartanalyzer.
@@ -550,7 +555,7 @@ endif
 #
 # Usage:
 #	make test.unit [( [crate=@all]
-#	                | crate=<crate-name>
+#	                | crate=<crate-name> [features=(all|<f1>[,<f2>...])]
 #	                | crate=medea-jason
 #	                  [browser=(chrome|firefox|default)]
 #	                  [timeout=(60|<seconds>)] )]
@@ -580,7 +585,9 @@ else
 	@make docker.down.webdriver browser=$(browser)
 endif
 else
-	cargo test -p $(crate) --all-features
+	cargo test -p $(crate) $(if $(call eq,$(or $(features),all),all),\
+		--all-features ,\
+		--features $(features) )
 endif
 endif
 

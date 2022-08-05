@@ -279,14 +279,19 @@ impl InnerMediaConnections {
     }
 
     /// Returns [`Iterator`] over [`receiver::Component`]s with provided
-    /// [`MediaKind`].
-    fn iter_receivers_with_kind(
+    /// [`MediaKind`] and [`MediaSourceKind`].
+    fn iter_receivers_with_kind_and_source_kind(
         &self,
         kind: MediaKind,
+        source_kind: Option<MediaSourceKind>,
     ) -> impl Iterator<Item = &receiver::Component> {
         self.receivers
             .values()
             .filter(move |s| s.state().kind() == kind)
+            .filter(move |s| {
+                source_kind
+                    .map_or(true, |skind| s.state().source_kind() == skind)
+            })
     }
 
     /// Returns all [`TransceiverSide`]s by provided [`TrackDirection`],
@@ -303,7 +308,7 @@ impl InnerMediaConnections {
                 .map(|tx| tx.state() as Rc<dyn TransceiverSide>)
                 .collect(),
             TrackDirection::Recv => self
-                .iter_receivers_with_kind(kind)
+                .iter_receivers_with_kind_and_source_kind(kind, source_kind)
                 .map(|rx| rx.state() as Rc<dyn TransceiverSide>)
                 .collect(),
         }
@@ -555,10 +560,17 @@ impl MediaConnections {
         let mut sender_and_track =
             Vec::with_capacity(self.0.borrow().senders.len());
         let mut media_exchange_state_updates = HashMap::new();
-        for sender in self.0.borrow().senders.values() {
-            if let Some(track) = tracks.get(&sender.state().id()).cloned() {
-                if sender.caps().satisfies(track.as_ref()) {
-                    sender_and_track.push((sender.obj(), track));
+        let senders = self
+            .0
+            .borrow()
+            .senders
+            .values()
+            .map(|c| (c.obj(), c.state()))
+            .collect::<Vec<_>>();
+        for (sender, state) in senders {
+            if let Some(track) = tracks.get(&state.id()).cloned() {
+                if sender.caps().satisfies(track.as_ref()).await {
+                    sender_and_track.push((sender, track));
                 } else {
                     return Err(tracerr::new!(
                         InsertLocalTracksError::InvalidMediaTrack
@@ -569,10 +581,8 @@ impl MediaConnections {
                     InsertLocalTracksError::NotEnoughTracks
                 ));
             } else {
-                let _ = media_exchange_state_updates.insert(
-                    sender.state().id(),
-                    media_exchange_state::Stable::Disabled,
-                );
+                let _ = media_exchange_state_updates
+                    .insert(state.id(), media_exchange_state::Stable::Disabled);
             }
         }
 
@@ -676,7 +686,7 @@ impl MediaConnections {
                 (kinds.has(s.state().kind(), s.state().source_kind())
                     && s.state().enabled()
                     && !s.has_track())
-                .then(|| s.state().id())
+                .then_some(s.state().id())
             })
             .collect()
     }
@@ -718,7 +728,7 @@ impl MediaConnections {
         !self
             .0
             .borrow()
-            .iter_receivers_with_kind(MediaKind::Video)
+            .iter_receivers_with_kind_and_source_kind(MediaKind::Video, None)
             .any(|s| !s.state().enabled_individual())
     }
 
@@ -729,7 +739,7 @@ impl MediaConnections {
         !self
             .0
             .borrow()
-            .iter_receivers_with_kind(MediaKind::Audio)
+            .iter_receivers_with_kind_and_source_kind(MediaKind::Audio, None)
             .any(|s| !s.state().enabled_individual())
     }
 

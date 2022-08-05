@@ -18,7 +18,9 @@
     clippy::debug_assert_with_mut_call,
     clippy::decimal_literal_representation,
     clippy::else_if_without_else,
+    clippy::empty_drop,
     clippy::empty_line_after_outer_attr,
+    clippy::empty_structs_with_brackets,
     clippy::equatable_if_let,
     clippy::exit,
     clippy::expect_used,
@@ -31,6 +33,8 @@
     clippy::if_then_some_else_none,
     clippy::imprecise_flops,
     clippy::index_refutable_slice,
+    clippy::iter_with_drain,
+    clippy::large_include_file,
     clippy::let_underscore_must_use,
     clippy::lossy_float_literal,
     clippy::map_err_ignore,
@@ -40,6 +44,7 @@
     clippy::multiple_inherent_impl,
     clippy::mutex_integer,
     clippy::nonstandard_macro_braces,
+    clippy::only_used_in_recursion,
     clippy::option_if_let_else,
     clippy::panic_in_result_fn,
     clippy::pedantic,
@@ -60,6 +65,7 @@
     clippy::todo,
     clippy::trailing_empty_array,
     clippy::trivial_regex,
+    clippy::try_err,
     clippy::undocumented_unsafe_blocks,
     clippy::unimplemented,
     clippy::unnecessary_self_imports,
@@ -88,6 +94,21 @@
     unused_results,
     variant_size_differences
 )]
+// Because of uncontrolled names in the generated code.
+#![allow(clippy::same_name_method)]
 
+pub mod callback;
+pub mod control;
+#[cfg(feature = "direct")]
+pub mod direct;
 #[cfg(feature = "grpc")]
 pub mod grpc;
+
+#[doc(inline)]
+pub use self::{
+    callback::Api as CallbackApi,
+    control::{
+        endpoint, member, room, Api as ControlApi, Element, Elements, Endpoint,
+        Fid, Member, Ping, Pong, Room, RootElement,
+    },
+};

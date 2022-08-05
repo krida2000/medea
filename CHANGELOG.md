@@ -63,7 +63,7 @@ All user visible changes to this project will be documented in this file. This p
         - `MediaSettingsUpdateException`.
     - `MediaManagerHandle.set_output_audio_id()` method switching output audio device on Dart platform ([#29]);
     - `MediaManagerHandle.on_device_change()` callback firing whenever `MediaManagerHandle.enumerate_devices()` list changes ([#30]);
-    - `ConnectionHandle` methods ([#43]):
+    - `ConnectionHandle` methods ([#43], [#59]):
         - `enable_remote_video`;
         - `disable_remote_video`;
         - `enable_remote_audio`;
@@ -73,6 +73,14 @@ All user visible changes to this project will be documented in this file. This p
         - `microphone_volume_is_available`;
         - `microphone_volume`;
         - `set_microphone_volume`.
+    - `LocalMediaInitExceptionKind` variants ([#52]):
+        - `GetUserMediaAudioFailed`;
+        - `GetUserMediaVideoFailed`.
+
+### Fixed
+
+- Library API:
+    - Unconverted into Dart exception error in `RoomHandle.onFailedLocalMedia()` ([#57]).
 
 ### Updated
 
@@ -86,6 +94,9 @@ All user visible changes to this project will be documented in this file. This p
 [#43]: /../../pull/43
 [#46]: /../../pull/46
 [#49]: /../../pull/49
+[#52]: /../../pull/52
+[#57]: /../../pull/57
+[#59]: /../../pull/59
 
 
 

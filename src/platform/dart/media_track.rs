@@ -8,7 +8,7 @@ use dart_sys::Dart_Handle;
 use medea_macro::dart_bridge;
 
 use crate::{
-    api::c_str_into_string,
+    api::dart_string_into_rust,
     media::{
         track::MediaStreamTrackState, FacingMode, MediaKind, MediaSourceKind,
     },
@@ -87,7 +87,7 @@ mod media_stream_track {
         ///
         /// [0]: https://w3.org/TR/mediacapture-streams#mediastreamtrack
         /// [1]: https://tinyurl.com/w3-streams#dom-mediastreamtrack-readystate
-        pub fn ready_state(track: Dart_Handle) -> i64;
+        pub fn ready_state(track: Dart_Handle) -> Dart_Handle;
 
         /// [Stops][1] the provided [MediaStreamTrack][0].
         ///
@@ -146,7 +146,9 @@ impl MediaStreamTrack {
     /// [1]: https://w3.org/TR/mediacapture-streams#dom-mediastreamtrack-id
     #[must_use]
     pub fn id(&self) -> String {
-        unsafe { c_str_into_string(media_stream_track::id(self.inner.get())) }
+        unsafe {
+            dart_string_into_rust(media_stream_track::id(self.inner.get()))
+        }
     }
 
     /// Returns [device ID][1] of this [`MediaStreamTrack`].
@@ -156,7 +158,9 @@ impl MediaStreamTrack {
     #[must_use]
     pub fn device_id(&self) -> String {
         unsafe {
-            c_str_into_string(media_stream_track::device_id(self.inner.get()))
+            dart_string_into_rust(media_stream_track::device_id(
+                self.inner.get(),
+            ))
         }
     }
 
@@ -233,10 +237,21 @@ impl MediaStreamTrack {
     ///
     /// [1]: https://tinyurl.com/w3-streams#dom-mediastreamtrack-readystate
     #[allow(clippy::unused_self)]
-    #[must_use]
-    pub fn ready_state(&self) -> MediaStreamTrackState {
-        // TODO: Correct implementation requires `flutter_webrtc`-side fixes.
-        MediaStreamTrackState::Live
+    pub async fn ready_state(&self) -> MediaStreamTrackState {
+        let handle = self.inner.get();
+        let state = unsafe {
+            FutureFromDart::execute::<i32>(media_stream_track::ready_state(
+                handle,
+            ))
+            .await
+        }
+        .unwrap();
+
+        match state {
+            0 => MediaStreamTrackState::Live,
+            1 => MediaStreamTrackState::Ended,
+            _ => unreachable!("Unknown `MediaStreamTrackState`: {state}"),
+        }
     }
 
     /// [Stops][1] this [`MediaStreamTrack`].

@@ -2,7 +2,6 @@
 
 use medea_control_api_proto::grpc::api as proto;
 use serde::{Deserialize, Serialize};
-use smart_default::SmartDefault;
 
 /// P2P mode of [`WebRtcPublishEndpoint`].
 #[derive(Clone, Copy, Debug, Deserialize, Serialize)]
@@ -40,35 +39,24 @@ impl From<proto::web_rtc_publish_endpoint::P2p> for P2pMode {
     }
 }
 
-/// TODO: Remove once no false positive.
-#[allow(clippy::use_self)]
-mod publish_policy {
-    use super::{Deserialize, Serialize, SmartDefault};
+/// Publishing policy of the video or audio media type in the
+/// [`WebRtcPublishEndpoint`].
+#[derive(
+    Clone, Copy, Debug, Deserialize, Eq, PartialEq, Serialize, Default,
+)]
+pub enum PublishPolicy {
+    /// Publish this media type if it possible.
+    #[default]
+    Optional,
 
-    /// Publishing policy of the video or audio media type in the
-    /// [`WebRtcPublishEndpoint`].
+    /// Don't start call if this media type can't be published.
+    Required,
+
+    /// Media type __must__ not be published.
     ///
-    /// [`WebRtcPublishEndpoint`]: super::WebRtcPublishEndpoint
-    #[derive(
-        Clone, Copy, Debug, Deserialize, Eq, PartialEq, Serialize, SmartDefault,
-    )]
-    pub enum PublishPolicy {
-        /// Publish this media type if it possible.
-        #[default]
-        Optional,
-
-        /// Don't start call if this media type can't be published.
-        Required,
-
-        /// Media type __must__ not be published.
-        ///
-        /// Media server will not try to initialize publishing.
-        Disabled,
-    }
+    /// Media server will not try to initialize publishing.
+    Disabled,
 }
-
-#[doc(inline)]
-pub use self::publish_policy::PublishPolicy;
 
 impl From<proto::web_rtc_publish_endpoint::PublishPolicy> for PublishPolicy {
     fn from(proto: proto::web_rtc_publish_endpoint::PublishPolicy) -> Self {
@@ -189,7 +177,7 @@ impl WebRtcPublishEndpoint {
         let p2p: proto::web_rtc_publish_endpoint::P2p = self.p2p.into();
         proto::WebRtcPublishEndpoint {
             id,
-            p2p: p2p as i32,
+            p2p: p2p.into(),
             force_relay: self.force_relay,
             on_start: String::new(),
             on_stop: String::new(),

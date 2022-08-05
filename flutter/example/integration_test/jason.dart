@@ -73,7 +73,7 @@ void main() {
         () => returnsLocalMediaInitException('Dart err cause1').unwrap(),
         throwsA(predicate((e) =>
             e is LocalMediaInitException &&
-            e.kind() == LocalMediaInitExceptionKind.GetUserMediaFailed &&
+            e.kind() == LocalMediaInitExceptionKind.GetUserMediaAudioFailed &&
             e.cause() == 'Dart err cause1' &&
             e.trace().contains('at src'))));
 
@@ -306,7 +306,7 @@ void main() {
     await room.enableAudio();
     await room.disableRemoteAudio();
     await room.enableRemoteAudio();
-    await room.disableRemoteVideo();
+    await room.disableRemoteVideo(MediaSourceKind.Device);
 
     var stateErr;
     try {
@@ -567,17 +567,19 @@ void main() {
 
     var intVal = ForeignValue.fromInt(45);
     var stringVal = ForeignValue.fromString('test string');
+    var stringVal2 = ForeignValue.fromString('test string');
     var noneVal = ForeignValue.none();
 
     (intListener(intVal.ref) as Function)(45);
     (stringListener(stringVal.ref) as Function)('test string');
     (optionalIntListener(intVal.ref) as Function)(45);
     (optionalIntListener(noneVal.ref) as Function)(null);
-    (optionalStringListener(stringVal.ref) as Function)('test string');
+    (optionalStringListener(stringVal2.ref) as Function)('test string');
     (optionalStringListener(noneVal.ref) as Function)(null);
 
     intVal.free();
     stringVal.free();
+    stringVal2.free();
     noneVal.free();
   });
 

@@ -16,7 +16,9 @@
     clippy::debug_assert_with_mut_call,
     clippy::decimal_literal_representation,
     clippy::default_union_representation,
+    clippy::empty_drop,
     clippy::empty_line_after_outer_attr,
+    clippy::empty_structs_with_brackets,
     clippy::equatable_if_let,
     clippy::exit,
     clippy::fallible_impl_from,
@@ -28,6 +30,8 @@
     clippy::if_then_some_else_none,
     clippy::imprecise_flops,
     clippy::index_refutable_slice,
+    clippy::iter_with_drain,
+    clippy::large_include_file,
     clippy::lossy_float_literal,
     clippy::map_err_ignore,
     clippy::mem_forget,
@@ -35,6 +39,7 @@
     clippy::mutex_atomic,
     clippy::mutex_integer,
     clippy::nonstandard_macro_braces,
+    clippy::only_used_in_recursion,
     clippy::option_if_let_else,
     clippy::pedantic,
     clippy::print_stderr,
@@ -54,6 +59,7 @@
     clippy::trailing_empty_array,
     clippy::transmute_undefined_repr,
     clippy::trivial_regex,
+    clippy::try_err,
     clippy::undocumented_unsafe_blocks,
     clippy::unnecessary_self_imports,
     clippy::unneeded_field_pattern,
@@ -81,6 +87,9 @@
 #![cfg_attr(not(feature = "mockable"), warn(missing_docs))]
 #![cfg_attr(feature = "mockable", allow(missing_docs))]
 #![allow(clippy::module_name_repetitions)]
+// TODO: Remove once annoying false positive is fixed:
+//       https://github.com/rust-lang/rust-clippy/issues/6902
+#![allow(clippy::use_self)]
 
 #[macro_use]
 pub mod utils;

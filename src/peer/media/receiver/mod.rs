@@ -156,7 +156,10 @@ impl Receiver {
 
         let enabled_in_cons = match &state.media_type() {
             proto::MediaType::Audio(_) => recv_constraints.is_audio_enabled(),
-            proto::MediaType::Video(_) => recv_constraints.is_video_enabled(),
+            proto::MediaType::Video(_) => {
+                recv_constraints.is_video_device_enabled()
+                    || recv_constraints.is_video_display_enabled()
+            }
         };
         if !enabled_in_cons {
             state
@@ -253,7 +256,7 @@ impl Receiver {
 
         drop(self.transceiver.replace(Some(transceiver)));
         if let Some(prev_track) = self.track.replace(Some(new_track)) {
-            prev_track.stop();
+            prev_track.stop().await;
         };
         self.maybe_notify_track().await;
     }
@@ -336,7 +339,7 @@ impl Drop for Receiver {
             }
         }
         if let Some(recv_track) = self.track.borrow_mut().take() {
-            recv_track.stop();
+            platform::spawn(recv_track.stop());
         }
     }
 }

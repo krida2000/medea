@@ -1,9 +1,9 @@
 import 'dart:ffi';
 
 import 'package:ffi/ffi.dart';
-
 import 'package:flutter_webrtc/flutter_webrtc.dart' as webrtc;
 
+import 'package:medea_jason/src/native/ffi/native_string.dart';
 import 'media_devices.g.dart' as bridge;
 
 /// Registers functions allowing Rust to operate Dart media devices.
@@ -19,6 +19,7 @@ void registerFunctions(DynamicLibrary dl) {
         Pointer.fromFunction(_microphoneVolumeIsAvailable),
     microphoneVolume: Pointer.fromFunction(_microphoneVolume),
     onDeviceChange: Pointer.fromFunction(_onDeviceChange),
+    getMediaExceptionKind: Pointer.fromFunction(_getMediaExceptionKind, 0),
   );
 }
 
@@ -40,7 +41,7 @@ Object _getDisplayMedia(webrtc.DisplayConstraints constraints) {
 
 /// Switches output audio device to the device with the provided [deviceId].
 Object _setOutputAudioId(Pointer<Utf8> deviceId) {
-  return () => webrtc.setOutputAudioId(deviceId.toDartString());
+  return () => webrtc.setOutputAudioId(deviceId.nativeStringToDartString());
 }
 
 /// Sets the microphone volume level in percents.
@@ -63,4 +64,9 @@ Object _microphoneVolume() {
 /// Subscribes onto the `MediaDevices`'s `devicechange` event.
 void _onDeviceChange(Function cb) {
   webrtc.onDeviceChange(() => cb(null));
+}
+
+/// Returns the kind of the `GetMediaException`.
+int _getMediaExceptionKind(webrtc.GetMediaException exception) {
+  return exception.kind().index;
 }
