@@ -14,7 +14,7 @@ dependencies:
   ffi: ^2.0.0
   flutter_webrtc:
     git:
-      url: https://github.com/instrumentisto/flutter-webrtc.git
+      url: https://github.com/krida2000/webrtc
   js: ^0.6.3
 
 dev_dependencies:
